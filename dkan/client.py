@@ -69,13 +69,12 @@ class DatasetAPI:
     s = requests.Session()
     return s.send(prepared)
 
-  def attach_file_to_node(self, file, node_id):
+  def attach_file_to_node(self, file, node_id, update=0):
     uri = os.path.join(self.dkan, 'api/dataset/node/%s/attach_file' % node_id)
     headers = self.headers.copy()
     data = {
       'field_name': 'field_upload',
-      'attach': 1,
-      'replace': 1,
+      'attach': update,
     }
     files = {
       'files[1]': open(file, 'rb'),
