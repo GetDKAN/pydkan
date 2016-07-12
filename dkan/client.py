@@ -29,9 +29,17 @@ class DatasetAPI:
     token = self.post(uri)
     self.headers['X-CSRF-Token'] = token.text
 
-  def node(self, node_id, action='retrieve', **kwargs):
-    uri = os.path.join(self.dkan, 'api/dataset/node/%s' % node_id)
+  def node(self, action='index', **kwargs):
+    uri = os.path.join(self.dkan, 'api/dataset/node')
+    if action not in ['index', 'create']:
+      node_id = kwargs.get('node_id', False)
+      if node_id:
+        del kwargs['node_id']
+        uri = os.path.join(uri, '%s' % node_id)
+      else:
+        raise ValueError('For action type %s you need to specify a node_id' % action)
     action_map = {
+      'index': self.get,
       'retrieve': self.get,
       'update': self.put,
       'create': self.post,
@@ -39,15 +47,15 @@ class DatasetAPI:
     }
     if not action in action_map.keys():
       raise ValueError('action parameter should be one of the following: %s' % ', '.join(action_map.keys()))
-    if action == 'retrieve':
-      return action_map[action](uri)
-    else:
+    if action not in ['index', 'retrieve']:
       kwargs['headers'] = self.headers.copy()
       kwargs['headers']['Content-Type'] = 'application/json'
-      return action_map[action](uri, **kwargs)
+      if 'data' in kwargs.keys():
+        kwargs['data'] = json.dumps(kwargs['data'])
+    return action_map[action](uri, **kwargs)
 
-  def get(self, uri):
-    return self.request(uri, 'GET')
+  def get(self, uri, **kwargs):
+    return self.request(uri, 'GET', **kwargs)
 
   def post(self, uri, **kwargs):
     return self.request(uri, 'POST', **kwargs)
@@ -69,11 +77,11 @@ class DatasetAPI:
     s = requests.Session()
     return s.send(prepared)
 
-  def attach_file_to_node(self, file, node_id, update=0):
+  def attach_file_to_node(self, file, node_id, field, update=0):
     uri = os.path.join(self.dkan, 'api/dataset/node/%s/attach_file' % node_id)
     headers = self.headers.copy()
     data = {
-      'field_name': 'field_upload',
+      'field_name': field,
       'attach': update,
     }
     files = {
