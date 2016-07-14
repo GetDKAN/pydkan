@@ -20,4 +20,4 @@ dependencies:
         background: true
 test:
   override:
-     - 'nosetests'
+     - 'nosetests --verbose'
