@@ -1,0 +1,43 @@
+ahoyapi: v1
+version: 0.0.0
+commands:
+  dkan:
+    usage: Sets DKAN URI environment variable
+    cmd: |
+      FILE=".ahoy/.dkan"
+      if [ -f $FILE ]; then
+        cat $FILE
+        exit 0
+      else
+        echo "DKAN uri not set. Type it followed by [ENTER]:"
+        read URI
+        echo "$URI" > .ahoy/.dkan
+        exit 0
+      fi
+  python:
+    usage:  
+    cmd: |
+      FILE=".ahoy/.dkan"
+      if [ ! -f $FILE ]; then
+        ahoy api dkan
+      fi
+      DKAN_URI=`cat $FILE`
+      ahoy docker compose run -e DKAN_URI=$DKAN_URI pydkan ipython {{args}}
+  prompt:
+    usage: Steps in the pydkan container
+    cmd: |
+      FILE=".ahoy/.dkan"
+      if [ ! -f $FILE ]; then
+        ahoy api dkan
+      fi
+      DKAN_URI=`cat $FILE`
+      ahoy docker compose run -e DKAN_URI=$DKAN_URI pydkan bash
+  tests:
+    usage: Runs nosetests
+    cmd: |
+      FILE=".ahoy/.dkan"
+      if [ ! -f $FILE ]; then
+        ahoy api dkan
+      fi
+      DKAN_URI=`cat $FILE`
+      ahoy docker compose run -e DKAN_URI=$DKAN_URI pydkan nosetests --verbose

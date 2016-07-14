@@ -1,6 +1,3 @@
-import sys
-sys.path.append('..')
-
 import os
 import json
 from dkan.client import DatasetAPI

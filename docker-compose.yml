@@ -1,0 +1,4 @@
+pydkan:
+  build: ./
+  volumes:
+    - ".:/opt/pydkan"

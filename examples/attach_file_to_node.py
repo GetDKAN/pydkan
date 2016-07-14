@@ -1,6 +1,3 @@
-import sys
-sys.path.append('..')
-
 import os
 import json
 from dkan.client import DatasetAPI
@@ -15,7 +12,8 @@ if uri:
   nodes = api.node(params=payload).json()
   resource = nodes[0]
   print resource
-  csv = os.path.join('.', 'data', 'tension_sample_data.csv')
+  csv = os.path.join(os.path.dirname(os.path.abspath(__file__)), '.',
+                     'data', 'tension_sample_data.csv')
   # Attach the file to the resource node
   r = api.attach_file_to_node(csv, resource['nid'], 'field_upload')
   print r.status_code
