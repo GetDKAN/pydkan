@@ -18,6 +18,7 @@ dependencies:
     - 'bash dkan-archive-init.sh --deps --build=$DATABASE_URL'
     - 'cd ../dkan/ && ahoy drush --yes runserver :8888':
         background: true
+    - sleep 10
 test:
   override:
      - 'nosetests --verbose'
