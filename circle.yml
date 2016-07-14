@@ -1,0 +1,24 @@
+machine:
+  python:
+    version: '2.7.10'
+  php:
+    version: '5.5.11'
+  environment:
+    DATABASE_URL: mysql://ubuntu:@127.0.0.1:3306/circle_test
+    COMPOSER_PATH: $HOME/.config/composer/vendor/bin
+    PATH: $COMPOSER_PATH:$PATH
+    DKAN_URI: http://127.0.0.1:8888
+checkout:
+  post:
+    - rm -rf ~/.composer
+dependencies:
+  pre:
+    - 'pip install -r requirements.txt'
+  override:
+    - 'bash dkan-archive-init.sh --deps --build=$DATABASE_URL'
+    - 'cd ../dkan/ && ahoy drush --yes runserver :8888':
+        background: true
+    - sleep 10
+test:
+  override:
+     - 'nosetests --verbose'
