@@ -1,0 +1,9 @@
+ahoyapi: v1
+usage: DKAN cli app for development using ahoy.
+commands:
+  docker:
+    usage: A series of docker commands (experimental)
+    import: .ahoy/docker.ahoy.yml
+  api:
+    usage: 
+    import: .ahoy/api.ahoy.yml
