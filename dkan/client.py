@@ -15,7 +15,7 @@ class DatasetAPI:
   """The DKAN Dataset REST api client
 
   Provides a client for all available methods provided by the dkan
-  dataset rest api (Based on drupal services). It uses the requests
+  dataset rest api (based on drupal services). It uses the requests
   library for all the heavy lifting.
 
   :param dkan: The DKAN site's url
@@ -43,8 +43,8 @@ class DatasetAPI:
   def login(self, user, password):
     """Authenticates against the dkan site.
 
-    This method should not be called from user code. It authenticate
-    against the drupal site in two steps. 1) it posts the user and password
+    This method should not be called from user code. It authenticates
+    against the DKAN site in two steps. 1) it posts the user and password
     to api/dataset/user/login and retrieves a cookie 2) it sets the acquired
     cookie and posts against services/sessions/token to retrieve a token
     that's going to be sent as a header for every request this client
@@ -136,7 +136,7 @@ class DatasetAPI:
     :rtype: GET/POST/PUT/DELETE
     """
     if not 'headers' in kwargs.keys():
-      kwargs['headers'] = self.headers    
+      kwargs['headers'] = self.headers
     kwargs['cookies'] = self.cookies
     r = requests.Request(rtype, uri, **kwargs)
     prepared = r.prepare()
@@ -146,7 +146,7 @@ class DatasetAPI:
     return s.send(prepared)
 
   def attach_file_to_node(self, file, node_id, field, update=0):
-    """ Uploads and attach a file to a specific node
+    """ Uploads and attaches a file to a specific node
 
     :param file: A path to a file
     :param node_id: The node id that we'll attach to the file to
@@ -166,7 +166,7 @@ class DatasetAPI:
 
   @classmethod
   def pretty_print_request(cls, req):
-    """Pretty prints a request object
+    """Pretty-prints a request object
 
     :param req: the http request object
     """
