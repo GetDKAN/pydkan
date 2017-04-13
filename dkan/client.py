@@ -11,6 +11,9 @@ import os
 import json
 import requests
 
+class LoginError(Exception):
+  pass
+
 class DatasetAPI:
   """The DKAN Dataset REST api client
 
@@ -40,6 +43,7 @@ class DatasetAPI:
     self.debug = debug
     self.login(user, password)
 
+
   def login(self, user, password):
     """Authenticates against the dkan site.
 
@@ -61,14 +65,18 @@ class DatasetAPI:
     }
     # Login and set cookie
     login = self.post(uri, data=data)
-    login = login.json()
-    self.cookies = {
-      login['session_name']: login['sessid'],
-    }
-    # Request token
-    uri = os.path.join(self.dkan, 'services/session/token')
-    token = self.post(uri)
-    self.headers['X-CSRF-Token'] = token.text
+    if login.status_code == 200:
+      login = login.json()
+      self.cookies = {
+        login['session_name']: login['sessid'],
+      }
+      # Request token
+      uri = os.path.join(self.dkan, 'services/session/token')
+      token = self.post(uri)
+      self.headers['X-CSRF-Token'] = token.text
+    else:
+      message = 'pydkan client can\'t login.(%s %s)' % (login.status_code, login.content)
+      raise LoginError(message)
 
   def node(self, action='index', **kwargs):
     """Interface to the node endpoint.
