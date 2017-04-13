@@ -43,6 +43,8 @@ class DatasetAPI:
     self.debug = debug
     self.login(user, password)
 
+  def build_uri(self, path):
+    return os.path.join(self.dkan, path).replace('\\', '/')
 
   def login(self, user, password):
     """Authenticates against the dkan site.
@@ -58,7 +60,7 @@ class DatasetAPI:
     :param user: Drupal user
     :param password: Drupal Password
     """
-    uri = os.path.join(self.dkan, 'api/dataset/user/login')
+    uri = self.build_uri('api/dataset/user/login')
     data = {
       'username': user,
       'password': password
@@ -71,7 +73,7 @@ class DatasetAPI:
         login['session_name']: login['sessid'],
       }
       # Request token
-      uri = os.path.join(self.dkan, 'services/session/token')
+      uri = self.build_uri('services/session/token')
       token = self.post(uri)
       self.headers['X-CSRF-Token'] = token.text
     else:
@@ -101,12 +103,12 @@ class DatasetAPI:
     :param headers: (optional) a dictionary representing http request headers
 
     """
-    uri = os.path.join(self.dkan, 'api/dataset/node')
+    uri = self.build_uri('api/dataset/node').replace('\\', '/')
     if action not in ['index', 'create']:
       node_id = kwargs.get('node_id', False)
       if node_id:
         del kwargs['node_id']
-        uri = os.path.join(uri, '%s' % node_id)
+        uri = os.path.join(uri, '%s' % node_id).replace('\\', '/')
       else:
         raise ValueError('For action type %s you need to specify a node_id' % action)
     action_map = {
@@ -161,7 +163,7 @@ class DatasetAPI:
     :param field: The name of the drupal file field
     :param update: (optional) 0 -> replace existing, 1 -> attach a new one
     """
-    uri = os.path.join(self.dkan, 'api/dataset/node/%s/attach_file' % node_id)
+    uri = self.build_uri('api/dataset/node/%s/attach_file' % node_id)
     headers = self.headers.copy()
     data = {
       'field_name': field,
