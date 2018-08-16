@@ -1,6 +1,6 @@
 import os
 import json
-from client import DatasetAPI
+from dkan.client import DatasetAPI
 
 uri = os.environ.get('DKAN_URI', False)
 user = os.environ.get('DKAN_USER', 'admin')
@@ -24,7 +24,9 @@ if uri:
         'type': 'resource',
         'field_dataset_ref': {
             'und': {
-                'target_id': dataset_nid,
+                '0': {
+                    'target_id': dataset_nid,
+                },
             },
             
         },
